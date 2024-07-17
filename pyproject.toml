@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "item-drop-probability-calculator"
+version = "1.0.0"
+description = "Item Drop Probability Calculator"
+authors = ["RLAlpha49 <75044176+RLAlpha49@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.36.0"
+scipy = "^1.14.0"
+
+[tool.poetry.dev-dependencies]
+ruff = "^0.5.2"
+mypy = "^1.10.1"
+
+[tool.ruff]
+line-length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
+disable_error_code = "attr-defined"
