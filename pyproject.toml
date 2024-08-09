@@ -11,9 +11,10 @@ python = "^3.12"
 streamlit = "^1.37.1"
 scipy = "^1.14.0"
 matplotlib = "^3.9.1.post1"
+xlsxwriter = "^3.2.0"
 
 [tool.poetry.dev-dependencies]
-ruff = "^0.5.6"
+ruff = "^0.5.7"
 mypy = "^1.11.1"
 
 [tool.ruff]

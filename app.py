@@ -1,14 +1,16 @@
+import numpy as np
 import streamlit as st
 from scipy.stats import binom
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
+from io import BytesIO
 
 # Title of the app
 st.title("Item Drop Probability Calculator")
 
 # Input fields for user
-p = st.number_input("Enter the probability of success (e.g., 20 for 20%)", min_value=0.0, step=0.01, format="%.2f")
+p = st.number_input("Enter the probability of success (e.g., 20 for 20%)", min_value=0.0, step=0.01, format="%.3f")
 desired_successes = st.number_input("Enter the desired number of successes", min_value=1, step=1)
 played_attempts = st.number_input(
     "Enter the number of times you have already attempted (optional)", min_value=0, step=1
@@ -37,40 +39,67 @@ def calculate_probabilities(prob, successes, mission_time):
     # Detailed probabilities for CSV
     csv_thresholds = [i / 100 for i in range(1, 100)]
 
-    # Table to store results for display
-    table = []
-    # Table to store results for CSV
-    table_csv = []
-    attempts_max = 0
+    # Precompute binomial CDF for all possible attempts
+    max_attempts = 0
+    attempts = np.arange(1, 1000000 + 1)
+    cdf_values = binom.cdf(successes - 1, attempts, prob)
+    probabilities = 1 - cdf_values
 
+    # Use search sorted to find the minimum number of attempts for each threshold
+    table = []
+    table_csv = []
     for threshold in csv_thresholds:
-        for n in range(1, 100000):  # Arbitrary upper limit for search
-            if 1 - binom.cdf(successes - 1, n, prob) >= threshold:
-                if mission_time > 0:
-                    total_time = n * mission_time
-                    formatted_time = format_time(total_time)
-                    table_csv.append([int(threshold * 100), n, formatted_time])
-                    if threshold in display_thresholds:
-                        table.append([int(threshold * 100), n, formatted_time])
-                else:
-                    table_csv.append([int(threshold * 100), n])
-                    if threshold in display_thresholds:
-                        table.append([int(threshold * 100), n])
-                if threshold == 0.99:
-                    attempts_max = n
-                break
+        idx = np.searchsorted(probabilities, threshold, side="left")
+        if idx < len(attempts):
+            n = attempts[idx]
+            if mission_time > 0:
+                total_time = n * mission_time
+                formatted_time = format_time(total_time)
+                table_csv.append([int(threshold * 100), n, formatted_time])
+                if threshold in display_thresholds:
+                    table.append([int(threshold * 100), n, formatted_time])
+            else:
+                table_csv.append([int(threshold * 100), n])
+                if threshold in display_thresholds:
+                    table.append([int(threshold * 100), n])
+                    max_attempts = n
+
+    # Add detailed probabilities for each number of attempts to the CSV table
+    detailed_table_csv = []
+    for n in range(1, max_attempts + 1):
+        prob = probabilities[n - 1] * 100
+        if mission_time > 0:
+            total_time = n * mission_time
+            formatted_time = format_time(total_time)
+            detailed_table_csv.append([n, prob, formatted_time])
+        else:
+            detailed_table_csv.append([n, prob])
 
     # Round up max_attempts
-    if attempts_max < 100:
-        attempts_max = math.ceil(attempts_max / 10) * 10
-    elif attempts_max < 1000:
-        attempts_max = math.ceil(attempts_max / 100) * 100
-    elif attempts_max < 10000:
-        attempts_max = math.ceil(attempts_max / 1000) * 1000
+    if max_attempts < 100:
+        max_attempts = math.ceil(max_attempts / 10) * 10
+    elif max_attempts < 1000:
+        max_attempts = math.ceil(max_attempts / 100) * 100
+    elif max_attempts < 10000:
+        max_attempts = math.ceil(max_attempts / 1000) * 1000
+    elif max_attempts < 100000:
+        max_attempts = math.ceil(max_attempts / 10000) * 10000
+    elif max_attempts < 1000000:
+        max_attempts = math.ceil(max_attempts / 100000) * 100000
     else:
-        attempts_max = math.ceil(attempts_max / 10000) * 10000
+        max_attempts = math.ceil(max_attempts / 1000000) * 1000000
 
-    return table, table_csv, attempts_max
+    return table, table_csv, detailed_table_csv, max_attempts, probabilities
+
+
+@st.cache_data
+def generate_excel_file(df_detailed_csv, df_csv):
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+        df_detailed_csv.to_excel(writer, index=False, sheet_name="Detailed Probabilities")
+        df_csv.to_excel(writer, index=False, sheet_name="Display Table")
+    output.seek(0)
+    return output
 
 
 # Convert probability to a percentage if it's greater than 0
@@ -79,7 +108,9 @@ if p > 0:
 
 # Calculate probabilities and display table
 if p and desired_successes:
-    display_table, csv_table, max_attempts = calculate_probabilities(p, desired_successes, total_mission_time)
+    display_table, csv_table, detailed_table_csv, max_attempts, probabilities = calculate_probabilities(
+        p, desired_successes, total_mission_time
+    )
 
     # Convert display table to DataFrame
     if total_mission_time > 0:
@@ -92,10 +123,14 @@ if p and desired_successes:
     # Convert CSV table to DataFrame
     if total_mission_time > 0:
         df_csv = pd.DataFrame(
-            csv_table, columns=["Probability (%)", "Number of Attempts", "Total Time (minutes:seconds)"]
+            csv_table, columns=["Number of Attempts", "Probability (%)", "Total Time (minutes:seconds)"]
+        )
+        df_detailed_csv = pd.DataFrame(
+            detailed_table_csv, columns=["Number of Attempts", "Probability (%)", "Total Time (minutes:seconds)"]
         )
     else:
-        df_csv = pd.DataFrame(csv_table, columns=["Probability (%)", "Number of Attempts"])
+        df_csv = pd.DataFrame(csv_table, columns=["Number of Attempts", "Probability (%)"])
+        df_detailed_csv = pd.DataFrame(detailed_table_csv, columns=["Number of Attempts", "Probability (%)"])
 
     st.markdown(
         """
@@ -117,12 +152,13 @@ if p and desired_successes:
     )
 
     # Display result table
-    st.write("### Number of Mission Attempts Required for Different Success Probabilities")
-    # Convert DataFrame to HTML without index
-    html = df_display.to_html(index=False)
+    with st.spinner("Generating display table..."):
+        st.write("### Number of Mission Attempts Required for Different Success Probabilities")
+        # Convert DataFrame to HTML without index
+        html = df_display.to_html(index=False)
 
-    # Display the HTML table in Streamlit without the index column
-    st.markdown(html, unsafe_allow_html=True)
+        # Display the HTML table in Streamlit without the index column
+        st.markdown(html, unsafe_allow_html=True)
 
     # If played attempts are provided, calculate the probability of achieving the desired successes
     if played_attempts > 0:
@@ -132,22 +168,24 @@ if p and desired_successes:
         )
 
     # Plot the probability distribution
-    fig, ax = plt.subplots()
-    x = range(1, max_attempts)
-    y = [1 - binom.cdf(desired_successes - 1, n, p) for n in x]
-    ax.plot(x, y, label="Probability Distribution")
-    ax.set_xlabel("Number of Attempts")
-    ax.set_ylabel("Probability")
-    ax.set_title("Probability Distribution of Successes")
-    ax.legend()
+    with st.spinner("Generating graph..."):
+        fig, ax = plt.subplots()
+        x = np.arange(1, max_attempts + 1)
+        y = probabilities[:max_attempts]
+        ax.plot(x, y, label="Probability Distribution")
+        ax.set_xlabel("Number of Attempts")
+        ax.set_ylabel("Probability")
+        ax.set_title("Probability Distribution of Successes")
+        ax.legend(loc="upper left")
 
-    st.pyplot(fig)
+        st.pyplot(fig)
 
-    # Add a download button for the CSV file
-    csv = df_csv.to_csv(index=False).encode("utf-8")
+    # Generate the Excel file
+    excel_file = generate_excel_file(df_detailed_csv, df_csv)
+
     st.download_button(
-        label="Download results as CSV",
-        data=csv,
-        file_name="results.csv",
-        mime="text/csv",
+        label="Download results as Excel",
+        data=excel_file,
+        file_name="results.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     )
