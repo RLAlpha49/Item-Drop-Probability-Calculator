@@ -35,6 +35,22 @@ def format_time(minutes):
 @st.cache_data
 def calculate_probabilities(prob, successes, mission_time):
     # Original specific probabilities to display
+    """
+    Calculates probabilities for mission success based on given parameters.
+    
+    Args:
+        prob (float): The probability of success for a single attempt.
+        successes (int): The number of successes required.
+        mission_time (float): The time required for each mission attempt.
+    
+    Returns:
+        tuple: A tuple containing:
+            - list: A table of probabilities for display thresholds.
+            - list: A detailed table of probabilities for CSV export.
+            - list: A detailed table of probabilities for each number of attempts.
+            - int: The maximum number of attempts, rounded up.
+            - numpy.ndarray: An array of probabilities for each number of attempts.
+    """
     display_thresholds = [0.01, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 0.99]
     # Detailed probabilities for CSV
     csv_thresholds = [i / 100 for i in range(1, 100)]
@@ -94,6 +110,15 @@ def calculate_probabilities(prob, successes, mission_time):
 
 @st.cache_data
 def generate_excel_file(df_detailed_csv, df_csv):
+    """Generates an Excel file containing two sheets from provided DataFrames.
+    
+    Args:
+        df_detailed_csv (pandas.DataFrame): DataFrame containing detailed probabilities data.
+        df_csv (pandas.DataFrame): DataFrame containing display table data.
+    
+    Returns:
+        BytesIO: A bytes buffer containing the generated Excel file with two sheets.
+    """
     output = BytesIO()
     with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
         df_detailed_csv.to_excel(writer, index=False, sheet_name="Detailed Probabilities")
