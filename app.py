@@ -37,12 +37,12 @@ def calculate_probabilities(prob, successes, mission_time):
     # Original specific probabilities to display
     """
     Calculates probabilities for mission success based on given parameters.
-    
+
     Args:
         prob (float): The probability of success for a single attempt.
         successes (int): The number of successes required.
         mission_time (float): The time required for each mission attempt.
-    
+
     Returns:
         tuple: A tuple containing:
             - list: A table of probabilities for display thresholds.
@@ -111,11 +111,11 @@ def calculate_probabilities(prob, successes, mission_time):
 @st.cache_data
 def generate_excel_file(df_detailed_csv, df_csv):
     """Generates an Excel file containing two sheets from provided DataFrames.
-    
+
     Args:
         df_detailed_csv (pandas.DataFrame): DataFrame containing detailed probabilities data.
         df_csv (pandas.DataFrame): DataFrame containing display table data.
-    
+
     Returns:
         BytesIO: A bytes buffer containing the generated Excel file with two sheets.
     """
