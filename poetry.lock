@@ -1429,13 +1429,13 @@ files = [
 
 [[package]]
 name = "streamlit"
-version = "1.42.1"
+version = "1.42.2"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = "!=3.9.7,>=3.9"
 files = [
-    {file = "streamlit-1.42.1-py2.py3-none-any.whl", hash = "sha256:f995642dfe14f5e93acf1956a909f17aa3c395d5aa0bc580461d7fc9a452bbb2"},
-    {file = "streamlit-1.42.1.tar.gz", hash = "sha256:4e13c47b0385bd633cc2777cb5da277129edb774db417ee77d8f349e9c7357ba"},
+    {file = "streamlit-1.42.2-py2.py3-none-any.whl", hash = "sha256:e2516c7fcd17a11a85cc1999fae58ace0a6458e2b4c1a411ed3d75b1aee2eb93"},
+    {file = "streamlit-1.42.2.tar.gz", hash = "sha256:62026dbdcb482790933f658b096d7dd58fa70da89c1f06fbc3658b91dcd4dab2"},
 ]
 
 [package.dependencies]
@@ -1616,4 +1616,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "4e65ec853f2191a5cdb9786776e9249692c2ef114761097e68404969ca747c29"
+content-hash = "e0ac0a60a18328e3423c1a32c4fabecf87a2034a5a9b6110b992994b4ae5bdaf"
