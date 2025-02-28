@@ -14,7 +14,7 @@ matplotlib = "^3.10.1"
 xlsxwriter = "^3.2.2"
 
 [tool.poetry.dev-dependencies]
-ruff = "^0.9.7"
+ruff = "^0.9.8"
 mypy = "^1.15.0"
 
 [tool.ruff]
