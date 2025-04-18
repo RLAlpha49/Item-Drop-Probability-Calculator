@@ -11,7 +11,7 @@ python = "^3.12"
 streamlit = "^1.44.1"
 scipy = "^1.15.2"
 matplotlib = "^3.10.1"
-xlsxwriter = "^3.2.2"
+xlsxwriter = "^3.2.3"
 
 [tool.poetry.dev-dependencies]
 ruff = "^0.11.5"
