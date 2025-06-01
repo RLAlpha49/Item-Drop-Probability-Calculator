@@ -85,7 +85,6 @@ python scripts.py clean
 Core dependencies:
 - Streamlit: Web application framework
 - SciPy: Statistical calculations
-- Matplotlib: Data visualization
 - XlsxWriter: Excel file generation
 
 For a complete list of dependencies, refer to `pyproject.toml`.
