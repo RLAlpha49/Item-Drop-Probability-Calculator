@@ -564,7 +564,8 @@ def render_item_results(item, max_attempts_input):
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 )
                 # Add ZIP download button with three CSVs (display, detailed, stats)
-                import io, zipfile
+                import io
+                import zipfile
 
                 zip_buffer = io.BytesIO()
                 with zipfile.ZipFile(zip_buffer, "w") as zf:
