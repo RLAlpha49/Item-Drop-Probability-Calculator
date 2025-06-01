@@ -15,7 +15,7 @@ xlsxwriter = "^3.2.3"
 
 [tool.poetry.dev-dependencies]
 ruff = "^0.11.7"
-mypy = "^1.15.0"
+mypy = "^1.16.0"
 
 [tool.ruff]
 line-length = 120
