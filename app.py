@@ -268,6 +268,22 @@ for idx, item in enumerate(st.session_state.item_list):
 
 # Results section for each item
 def render_item_results(item, max_attempts_input):
+    """
+    Render results and statistics for a given item based on mission parameters.
+
+    Args:
+        item (dict): Item details including:
+            - name (str): Item name
+            - mission_minutes (int): Mission duration in minutes
+            - mission_seconds (int): Additional mission seconds
+            - p (float): Success probability percentage
+            - desired_successes (int): Target number of successes
+            - played_attempts (int): Attempts already played
+        max_attempts_input (int): Maximum attempts to consider
+
+    Returns:
+        None: Updates the Streamlit UI with results, charts, and downloadable files.
+    """
     total_mission_time = item["mission_minutes"] + item["mission_seconds"] / 60
     p = item["p"] / 100 if item["p"] > 0 else 0
     desired_successes = item["desired_successes"]
