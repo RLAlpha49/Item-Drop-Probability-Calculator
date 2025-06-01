@@ -268,6 +268,38 @@ for idx, item in enumerate(st.session_state.item_list):
 
 # Results section for each item
 def render_item_results(item, max_attempts_input):
+    """Render item results for a given item and maximum number of attempts.
+    
+    This function calculates and displays various statistics, probabilities, and visualizations
+    for a specified item based on its mission parameters and desired success criteria.
+    
+    Args:
+        item (dict): A dictionary containing item details and parameters, including:
+            - name (str): The name of the item
+            - mission_minutes (int): Mission duration in minutes
+            - mission_seconds (int): Additional mission duration in seconds
+            - p (float): Probability of success as a percentage
+            - desired_successes (int): Number of desired successful outcomes
+            - played_attempts (int): Number of attempts already played
+        max_attempts_input (int): Maximum number of attempts to consider in calculations
+    
+    Returns:
+        None: This function doesn't return a value, but instead updates the Streamlit UI
+        with various elements such as success messages, tables, charts, and statistics.
+    
+    The function performs the following main tasks:
+    1. Calculates total mission time and success probability
+    2. Displays a success message and creates a checkbox for showing detailed probabilities
+    3. Calculates probabilities using the calculate_probabilities function
+    4. Displays a table of probabilities and a cumulative probability chart
+    5. Calculates and displays advanced statistics (expected value, variance, confidence interval)
+    6. Performs a Monte Carlo simulation and displays results
+    7. Generates and offers downloadable Excel and ZIP files containing detailed results
+    
+    Note: This function uses various Streamlit components (st) for rendering the UI and
+    relies on external libraries such as pandas, numpy, scipy, and altair for calculations
+    and visualizations.
+    """
     total_mission_time = item["mission_minutes"] + item["mission_seconds"] / 60
     p = item["p"] / 100 if item["p"] > 0 else 0
     desired_successes = item["desired_successes"]
