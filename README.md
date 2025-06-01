@@ -1,4 +1,3 @@
-
 # Item Drop Probability Calculator
 
 ## Overview
@@ -7,54 +6,90 @@ This project is a Streamlit web application that calculates and visualizes item 
 
 ## Key Features
 
-1. Probability calculation based on user inputs
-2. Interactive display of probabilities for different thresholds
-3. Visualization of probability distribution
-4. Excel file export of detailed results
-5. Optional mission time consideration
+1. **Probability Calculations**
+   - Calculate success probabilities based on user-defined parameters
+   - Support for multiple attempts and success thresholds
+   - Optional mission time constraints
 
-## File Structure
+2. **Data Visualization**
+   - Interactive probability distribution graphs
+   - Detailed probability tables
+   - Customizable probability thresholds display
 
-- `app.py`: Main Streamlit application file
-- `pyproject.toml`: Project configuration and dependencies
-- `scripts.py`: Utility scripts for project maintenance
-- `.github/`: GitHub Actions workflows for CI/CD
+3. **Export Capabilities**
+   - Generate Excel files with detailed probability data
+   - Export both summary and detailed results
+
+4. **Time Management**
+   - Mission time consideration in calculations
+   - Time formatting and validation
+   - Maximum attempts based on time constraints
+
+## Technical Details
+
+### Main Components
+
+- `format_time()`: Handles time formatting and display
+- `calculate_probabilities()`: Core probability calculation engine
+- `generate_excel_file()`: Handles data export to Excel
+- `render_item_results()`: Manages result visualization
+
+### Project Structure
+
+```
+.
+├── app.py              # Main Streamlit application
+├── scripts.py          # Utility and maintenance scripts
+├── pyproject.toml      # Project configuration
+└── .github/            # CI/CD workflows
+```
 
 ## Setup and Installation
 
 1. Ensure Python 3.12 or higher is installed
 2. Install dependencies using Poetry:
-   ```
+   ```bash
    poetry install
    ```
 
 ## Usage
 
-Run the Streamlit app:
-
-```
+Launch the application:
+```bash
 streamlit run app.py
 ```
 
 ## Development
 
-- Use `ruff` for linting and formatting
-- Run `mypy` for type checking
-- Use the `scripts.py` file for project cleaning and maintenance
+### Tools and Standards
 
-## CI/CD
+- **Code Quality**
+  - Ruff for linting and formatting
+  - MyPy for type checking
+  - Built-in cleaning scripts via `scripts.py`
 
-The project uses GitHub Actions for:
-- Ruff linting and formatting checks
-- CodeQL analysis
-- Dependabot updates with auto-merge capability
+- **CI/CD Pipeline**
+  - GitHub Actions for automated workflows
+  - CodeQL security analysis
+  - Dependabot integration with auto-merge capability
+
+### Maintenance
+
+Use the built-in cleaning script:
+```bash
+python scripts.py clean
+```
 
 ## Dependencies
 
-Main dependencies include:
-- Streamlit
-- SciPy
-- Matplotlib
-- XlsxWriter
+Core dependencies:
+- Streamlit: Web application framework
+- SciPy: Statistical calculations
+- Matplotlib: Data visualization
+- XlsxWriter: Excel file generation
 
-For a full list, refer to the `pyproject.toml` file.
+For a complete list of dependencies, refer to `pyproject.toml`.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
